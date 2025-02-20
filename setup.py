@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='mlvtrans',
-    version='0.1.0',
+    version='__version__',
     author='yugotakada',
     author_email='yugo.takada1@gmail.com',
     description='mlvtrans: construct a compatible symplectic basis and transversal phase-type gates for self-dual CSS codes',
