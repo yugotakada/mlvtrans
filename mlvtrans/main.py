@@ -112,7 +112,7 @@ def load_example(example_name):
         for row, cols in a_indices.items():
             A_matrix[row, cols] = 1
         logical_s_dict = {
-            0: 1,
+            0: -1,
         }
         desired_logi_S = tuple(logical_s_dict.get(i, 1) for i in range(num_logical_qubits))
 
