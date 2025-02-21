@@ -8,7 +8,7 @@ Run: `pip install mlvtrans`
 
 # How to use mlvtrans
 
-See [getting started notebook](https://scholar.google.co.jp/citations?user=hIPtQG8AAAAJ&hl=ja).
+See [getting started notebook](https://github.com/yugotakada/mlvtrans/blob/main/getting_started.ipynb).
 
 
 # Citation
