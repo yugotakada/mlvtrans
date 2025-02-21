@@ -1,15 +1,6 @@
 # mlvtrans
 
-mlvtrans is a python package that implements the algorithm explained in Appendix C of the paper [Logical Clifford gates with multilevel transversality](https://scholar.google.co.jp/citations?user=hIPtQG8AAAAJ&hl=ja). For any self-dual quantum CSS code which satisfies certain conditions (see Theorem 1. in [Logical Clifford gates with multilevel transversality](https://scholar.google.co.jp/citations?user=hIPtQG8AAAAJ&hl=ja)), mlvtrans constructs a compatible symplectic basis, which is a symplectic basis such that 
-
-(1) transversal logical Hadamard gates $\bigotimes_{j=1}^{k} \bar{H}_j$ can be implemented by transversal physical Hadamard gates $\bigotimes_{i=1}^{n} H_i$
-, 
-
-and 
-
-(2) for any $(a_1,\dots,a_k)\in\{-1,1\}^k$, transversal logical phase-type gates $\bigotimes_{j=1}^{k} \bar{S}_j^{a_j}$ can be implemented by transversal physical phase-type gates $\bigotimes_{i=1}^{n} S_i^{b_i}$ for some $(b_1,\dots,b_n)\in\{-1,1\}^n$.
-
- mlvtrans also outputs such $(b_1,\dots,b_n)\in\{-1,1\}^n$ for any choice of $(a_1,\dots,a_k)\in\{-1,1\}^k$.
+mlvtrans is a python package that implements the algorithm explained in Appendix C of the paper [Logical Clifford gates with multilevel transversality](https://scholar.google.co.jp/citations?user=hIPtQG8AAAAJ&hl=ja). For any self-dual quantum CSS code which satisfies certain conditions (see Theorem 1. in [Logical Clifford gates with multilevel transversality](https://scholar.google.co.jp/citations?user=hIPtQG8AAAAJ&hl=ja)), mlvtrans constructs a compatible symplectic basis, which is a symplectic basis such that (1) transversal logical Hadamard gates ![](https://latex.codecogs.com/svg.image?$\bigotimes_{j=1}^{k}\bar{H}_j$) can be implemented by transversal physical Hadamard gates ![](https://latex.codecogs.com/svg.image?$\bigotimes_{i=1}^{n}H_i$), and (2) for any ![](https://latex.codecogs.com/svg.image?$(a_1,\dots,a_k)\in\{-1,1\}^k$), transversal logical phase-type gates ![](https://latex.codecogs.com/svg.image?$\bigotimes_{j=1}^{k}\bar{S}_j^{a_j}$) can be implemented by transversal physical phase-type gates ![](https://latex.codecogs.com/svg.image?$\bigotimes_{i=1}^{n}S_i^{b_i}$) for some ![](https://latex.codecogs.com/svg.image?$(b_1,\dots,b_n)\in\{-1,1\}^n$). mlvtrans also outputs such ![](https://latex.codecogs.com/svg.image?$(b_1,\dots,b_n)\in\{-1,1\}^n$) for any choice of ![](https://latex.codecogs.com/svg.image?$(a_1,\dots,a_n)\in\{-1,1\}^n$).
 
 # Installation
 
