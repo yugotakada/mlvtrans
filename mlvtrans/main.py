@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 import numpy as np
 import stim
 
@@ -18,9 +19,9 @@ def load_example(example_name):
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 1],
         ], dtype=int)
         A_matrix=coset_rep_calcu(H_matrix)
-        desired_logi_S = (-1, 1, 1, 1, -1, 1, -1, 1, 1, 1, 1)
+        desired_logical_S = (-1, 1, 1, 1, -1, 1, -1, 1, 1, 1, 1)
 
-        return H_matrix, A_matrix, desired_logi_S
+        return H_matrix, A_matrix, desired_logical_S
 
     if example_name == "16_4_3":
         # --- [[16,4,3]] color code  ---
@@ -34,9 +35,9 @@ def load_example(example_name):
             [0, 0, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0],
         ], dtype=int)
         A_matrix=coset_rep_calcu(H_matrix)
-        desired_logi_S = (1, 1, 1, 1)
+        desired_logical_S = (1, 1, 1, 1)
 
-        return H_matrix, A_matrix, desired_logi_S
+        return H_matrix, A_matrix, desired_logical_S
     
     if example_name == "6_2_2":
         # --- [[6,2,2]] code  ---
@@ -48,9 +49,9 @@ def load_example(example_name):
             [1, 0, 1, 0, 1, 0],
             [0, 1, 0, 1, 0, 1],
         ], dtype=int)
-        desired_logi_S = (1, 1)
+        desired_logical_S = (1, 1)
 
-        return H_matrix, A_matrix, desired_logi_S
+        return H_matrix, A_matrix, desired_logical_S
     
     if example_name == "4_2_2":
         # --- [[4,2,2]] code  ---
@@ -61,9 +62,9 @@ def load_example(example_name):
             [0, 0, 1, 1],
             [1, 0, 1, 0],
         ], dtype=int)
-        desired_logi_S = (-1, 1)
+        desired_logical_S = (-1, 1)
 
-        return H_matrix, A_matrix, desired_logi_S
+        return H_matrix, A_matrix, desired_logical_S
     
     if example_name == "15_7_3":
         # --- [[15,7,3]] quantum Hamming code  ---
@@ -82,9 +83,9 @@ def load_example(example_name):
             [0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1],
             [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
         ], dtype=int)
-        desired_logi_S = (1, 1, 1, 1, 1, 1, 1)
+        desired_logical_S = (1, 1, 1, 1, 1, 1, 1)
 
-        return H_matrix, A_matrix, desired_logi_S
+        return H_matrix, A_matrix, desired_logical_S
 
     elif example_name == "19_1_5":
         # --- distance 5 hexagonal color code ---
@@ -114,9 +115,9 @@ def load_example(example_name):
         logical_s_dict = {
             0: -1,
         }
-        desired_logi_S = tuple(logical_s_dict.get(i, 1) for i in range(num_logical_qubits))
+        desired_logical_S = tuple(logical_s_dict.get(i, 1) for i in range(num_logical_qubits))
 
-        return H_matrix, A_matrix, desired_logi_S
+        return H_matrix, A_matrix, desired_logical_S
 
     else:
         raise Exception(f"Unknown example name: {example_name}")
@@ -340,7 +341,7 @@ def compute_v_from_H(H):
     x = solve_GF2(H, d)
     return x
 
-def compute_physical_S_from_logical_S(H_matrix, desired_logi_S, compatible_basis):
+def compute_physical_S_from_logical_S(H_matrix, desired_logical_S, compatible_basis):
     # Compute v from H.
     v = compute_v_from_H(H_matrix)
     # Default physical S
@@ -363,12 +364,12 @@ def compute_physical_S_from_logical_S(H_matrix, desired_logi_S, compatible_basis
         
     # Adjust the physical S configuration by applying logical Zs.
     for j in range(k):
-        if desired_logi_S[j] != q_tilde[j]:
+        if desired_logical_S[j] != q_tilde[j]:
             for i in support(compatible_basis[j]):
                 physical_S[i] *= -1
     return physical_S
 
-def verify_physical_S(physical_S, H, compatible_basis, desired_desired_logi_S):
+def verify_physical_S(physical_S, H, compatible_basis, desired_logical_S):
     v = np.where(physical_S == 1, 0, 1)
 
     # --- Check: Stabilizer group preservation ---
@@ -384,7 +385,7 @@ def verify_physical_S(physical_S, H, compatible_basis, desired_desired_logi_S):
 
     # --- Check: Logical actions ---
     k = len(compatible_basis)
-    if k != len(desired_desired_logi_S):
+    if k != len(desired_logical_S):
         print("Error: The number of logical qubits does not match the number of desired logical phase-type operators.")
         return False
     q_tilde = []
@@ -402,8 +403,8 @@ def verify_physical_S(physical_S, H, compatible_basis, desired_desired_logi_S):
             print(f"Unexpected q_j = {q_j} for logical qubit {j}.")
             return False
     for j in range(k):
-        if desired_desired_logi_S[j] != q_tilde[j]:
-            print(f"Logical qubit {j}: q_tilde is {q_tilde[j]}, but desired is {desired_desired_logi_S[j]}")
+        if desired_logical_S[j] != q_tilde[j]:
+            print(f"Logical qubit {j}: q_tilde is {q_tilde[j]}, but desired is {desired_logical_S[j]}")
             return False
 
     return True
@@ -455,15 +456,15 @@ def is_valid_compatible(Lx, Lz, H_matrix):
 
 
 #------ use ------
-def print_desired_logi_S(desired_logi_S):
-    index_line, symbol_line, s_dagger_line = format_S_configuration_with_indices(desired_logi_S, 1)
+def print_desired_logical_S(*, desired_logical_S):
+    index_line, symbol_line, s_dagger_line = format_S_configuration_with_indices(desired_logical_S, 1)
     print("\nDesired logical phase-type gates:")
     print(index_line)
     print(symbol_line)
     print("Indices with S\u0305\u2020:", s_dagger_line)
     return
 
-def alg1(A_matrix):
+def alg1(*, A_matrix):
     A = [A_matrix[i, :] for i in range(A_matrix.shape[0])]
     Lx, Lz = algorithm1(A)
     print("\nInitial symplectic basis from Algorithm 1:")
@@ -473,7 +474,7 @@ def alg1(A_matrix):
         print(f"  Lz = {Lz[i]}   support = {support(Lz[i])}   weight = {np.sum(Lz[i])}")
     return Lx, Lz
 
-def comp_basis(A_matrix):
+def comp_basis(*, A_matrix):
     A = [A_matrix[i, :] for i in range(A_matrix.shape[0])]
     if not has_odd_vector(A):
         print("\nCompatible symplectic basis does not exist: no vector in A has odd weight.")
@@ -487,9 +488,21 @@ def comp_basis(A_matrix):
         print(f"  Lz = {Lz[i]}   support = {support(Lz[i])}   weight = {np.sum(Lz[i])}")
     return Lx, Lz
 
-def phys_S_for_logi_S(H_matrix, desired_logi_S, Lx):
+def lemma2(*, Lx, Lz):
+    if not has_odd_vector(Lx):
+        print("\nCompatible symplectic basis does not exist: no vector in A has odd weight.")
+        return
+    Lx, Lz = make_basis_compatible(Lx, Lz)
+    print("\nCompatible symplectic basis:")
+    for i in range(len(Lx)):
+        print(f"Pair {i+1}:")
+        print(f"  Lx = {Lx[i]}   support = {support(Lx[i])}   weight = {np.sum(Lx[i])}")
+        print(f"  Lz = {Lz[i]}   support = {support(Lz[i])}   weight = {np.sum(Lz[i])}")
+    return Lx, Lz
+
+def phys_S_for_logi_S(*, H_matrix, desired_logical_S, Lx):
     # Compute the physical S configuration.
-    physical_S = compute_physical_S_from_logical_S(H_matrix, desired_logi_S, Lx)
+    physical_S = compute_physical_S_from_logical_S(H_matrix, desired_logical_S, Lx)
     index_line, symbol_line, s_dagger_line = format_S_configuration_with_indices(physical_S, 0)
     print("\nPhysical phase-type gates to achieve the desired logical phase-type gates:")
     print(index_line)
@@ -497,26 +510,26 @@ def phys_S_for_logi_S(H_matrix, desired_logi_S, Lx):
     print("Indices with S†:", s_dagger_line)
     return physical_S
 
-def check_compatible(H_matrix, Lx, Lz):
+def check_compatible(*, H_matrix, Lx, Lz):
     if is_valid_compatible(Lx, Lz, H_matrix):
         print("\nIs the symplectic basis compatible?: YES")
     else:
         print("\nIs the symplectic basis compatible?: NO")
     return
 
-def check_S(H_matrix, Lx, desired_logi_S, physical_S):
-    if verify_physical_S(physical_S, H_matrix, Lx, desired_logi_S):
+def check_S(*, H_matrix, desired_logical_S, Lx, physical_S):
+    if verify_physical_S(physical_S, H_matrix, Lx, desired_logical_S):
         print("\nDo the physical phase-type gates give the desired logical phase-type gates?: YES")
     else:
         print("\nDo the physical phase-type gates give the desired logical phase-type gates?: NO")
     return
 
-def run_matrix(*, H_matrix, A_matrix, desired_logi_S):
+def run_matrix(*, H_matrix, A_matrix, desired_logical_S):
     print("Parity-check matrix H:")
-    print(H_matrix) 
+    print(H_matrix)
     print("\nCoset representatives matrix A:")
     print(A_matrix)
-    index_line, symbol_line, s_dagger_line = format_S_configuration_with_indices(desired_logi_S, 1)
+    index_line, symbol_line, s_dagger_line = format_S_configuration_with_indices(desired_logical_S, 1)
     print("\nDesired logical phase-type gates:")
     print(index_line)
     print(symbol_line)
@@ -546,7 +559,7 @@ def run_matrix(*, H_matrix, A_matrix, desired_logi_S):
         print(f"  Lz = {Lz[i]}   support = {support(Lz[i])}   weight = {np.sum(Lz[i])}")
 
     # Compute the physical S configuration.
-    physical_S = compute_physical_S_from_logical_S(H_matrix, desired_logi_S, Lx)
+    physical_S = compute_physical_S_from_logical_S(H_matrix, desired_logical_S, Lx)
     index_line, symbol_line, s_dagger_line = format_S_configuration_with_indices(physical_S, 0)
     print("\nPhysical phase-type gates to achieve the desired logical phase-type gates:")
     print(index_line)
@@ -554,8 +567,15 @@ def run_matrix(*, H_matrix, A_matrix, desired_logi_S):
     print("Indices with S†:", s_dagger_line)
 
     # ---------- FINAL CHECK ----------
-    check_compatible(H_matrix, Lx, Lz)
-    check_S(H_matrix, Lx, desired_logi_S, physical_S)
+    if is_valid_compatible(Lx, Lz, H_matrix):
+        print("\nIs the symplectic basis compatible?: YES")
+    else:
+        print("\nIs the symplectic basis compatible?: NO")
+    
+    if verify_physical_S(physical_S, H_matrix, Lx, desired_logical_S):
+        print("\nDo the physical phase-type gates give the desired logical phase-type gates?: YES")
+    else:
+        print("\nDo the physical phase-type gates give the desired logical phase-type gates?: NO")
     # ---------- FINAL CHECK ----------
         
 def run_index(*, num_qubit, num_stabilizer, num_logical_qubits, h_indices, a_indices, logical_s_dict):
@@ -565,25 +585,25 @@ def run_index(*, num_qubit, num_stabilizer, num_logical_qubits, h_indices, a_ind
     A_matrix = np.zeros((num_logical_qubits, num_qubit), dtype=int)
     for row, cols in a_indices.items():
         A_matrix[row, cols] = 1
-    desired_logi_S = tuple(logical_s_dict.get(i, 1) for i in range(num_logical_qubits))
-    run_matrix(H_matrix=H_matrix, A_matrix=A_matrix, desired_logi_S=desired_logi_S)
+    desired_logical_S = tuple(logical_s_dict.get(i, 1) for i in range(num_logical_qubits))
+    run_matrix(H_matrix=H_matrix, A_matrix=A_matrix, desired_logical_S=desired_logical_S)
 
-def run_matrix_auto_coset(*, H_matrix, desired_logi_S):
+def run_matrix_auto_coset(*, H_matrix, desired_logical_S):
     A_matrix=coset_rep_calcu(H_matrix)
-    run_matrix(H_matrix=H_matrix, A_matrix=A_matrix, desired_logi_S=desired_logi_S)
+    run_matrix(H_matrix=H_matrix, A_matrix=A_matrix, desired_logical_S=desired_logical_S)
 
 def run_index_auto_coset(*, num_qubit, num_stabilizer, num_logical_qubits, h_indices, logical_s_dict):
     H_matrix = np.zeros((num_stabilizer, num_qubit), dtype=int)
     for row, cols in h_indices.items():
         H_matrix[row, cols] = 1
-    desired_logi_S = tuple(logical_s_dict.get(i, 1) for i in range(num_logical_qubits))
+    desired_logical_S = tuple(logical_s_dict.get(i, 1) for i in range(num_logical_qubits))
     A_matrix=coset_rep_calcu(H_matrix)
-    run_matrix(H_matrix=H_matrix, A_matrix=A_matrix, desired_logi_S=desired_logi_S)
+    run_matrix(H_matrix=H_matrix, A_matrix=A_matrix, desired_logical_S=desired_logical_S)
 
-def run_example(*, example_choice):
+def examples(*, example_choice):
     example = example_choice
-    H_matrix, A_matrix, desired_logi_S = load_example(example)
-    run_matrix(H_matrix=H_matrix, A_matrix=A_matrix, desired_logi_S=desired_logi_S)
+    H_matrix, A_matrix, desired_logical_S = load_example(example)
+    run_matrix(H_matrix=H_matrix, A_matrix=A_matrix, desired_logical_S=desired_logical_S)
 
 def main():
     import argparse
@@ -596,7 +616,7 @@ def main():
         help='example name'
     )
     args = parser.parse_args()
-    run_example(example_choice=args.example)
+    examples(example_choice=args.example)
 
 if __name__ == "__main__":
     main()
