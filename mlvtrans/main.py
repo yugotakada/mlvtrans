@@ -90,7 +90,6 @@ def load_example(example_name):
     elif example_name == "19_1_5":
         # --- distance 5 hexagonal color code ---
         num_qubit = 19
-        num_stabilizer = 9
         num_logical_qubits = 1
         h_indices = {
             0: [0,1,2,3],
@@ -106,16 +105,10 @@ def load_example(example_name):
         a_indices = {
             0: [14,15,16,17,18],
         }
-        H_matrix = np.zeros((num_stabilizer, num_qubit), dtype=int)
-        for row, cols in h_indices.items():
-            H_matrix[row, cols] = 1
-        A_matrix = np.zeros((num_logical_qubits, num_qubit), dtype=int)
-        for row, cols in a_indices.items():
-            A_matrix[row, cols] = 1
-        logical_s_dict = {
+        logical_S_dict = {
             0: -1,
         }
-        desired_logical_S = tuple(logical_s_dict.get(i, 1) for i in range(num_logical_qubits))
+        H_matrix, A_matrix, desired_logical_S= convert_index_to_matrix(num_qubit=num_qubit, num_logical_qubits=num_logical_qubits, h_indices=h_indices, a_indices=a_indices, logical_S_dict=logical_S_dict)
 
         return H_matrix, A_matrix, desired_logical_S
 
@@ -456,6 +449,19 @@ def is_valid_compatible(Lx, Lz, H_matrix):
 
 
 #------ use ------
+
+def convert_index_to_matrix(*, num_qubit, num_logical_qubits, h_indices, a_indices, logical_S_dict):
+    num_stabilizer = len(h_indices)
+    H_matrix = np.zeros((num_stabilizer, num_qubit), dtype=int)
+    for row, cols in h_indices.items():
+        H_matrix[row, cols] = 1
+    A_matrix = np.zeros((num_logical_qubits, num_qubit), dtype=int)
+    for row, cols in a_indices.items():
+        A_matrix[row, cols] = 1
+    desired_logical_S = tuple(logical_S_dict.get(i, 1) for i in range(num_logical_qubits))
+
+    return H_matrix, A_matrix, desired_logical_S
+
 def print_desired_logical_S(*, desired_logical_S):
     index_line, symbol_line, s_dagger_line = format_S_configuration_with_indices(desired_logical_S, 1)
     print("\nDesired logical phase-type gates:")
@@ -524,7 +530,7 @@ def check_S(*, H_matrix, desired_logical_S, Lx, physical_S):
         print("\nDo the physical phase-type gates give the desired logical phase-type gates?: NO")
     return
 
-def run_matrix(*, H_matrix, A_matrix, desired_logical_S):
+def run(*, H_matrix, A_matrix, desired_logical_S):
     print("Parity-check matrix H:")
     print(H_matrix)
     print("\nCoset representatives matrix A:")
@@ -578,32 +584,14 @@ def run_matrix(*, H_matrix, A_matrix, desired_logical_S):
         print("\nDo the physical phase-type gates give the desired logical phase-type gates?: NO")
     # ---------- FINAL CHECK ----------
         
-def run_index(*, num_qubit, num_stabilizer, num_logical_qubits, h_indices, a_indices, logical_s_dict):
-    H_matrix = np.zeros((num_stabilizer, num_qubit), dtype=int)
-    for row, cols in h_indices.items():
-        H_matrix[row, cols] = 1
-    A_matrix = np.zeros((num_logical_qubits, num_qubit), dtype=int)
-    for row, cols in a_indices.items():
-        A_matrix[row, cols] = 1
-    desired_logical_S = tuple(logical_s_dict.get(i, 1) for i in range(num_logical_qubits))
-    run_matrix(H_matrix=H_matrix, A_matrix=A_matrix, desired_logical_S=desired_logical_S)
-
-def run_matrix_auto_coset(*, H_matrix, desired_logical_S):
+def run_auto_coset(*, H_matrix, desired_logical_S):
     A_matrix=coset_rep_calcu(H_matrix)
-    run_matrix(H_matrix=H_matrix, A_matrix=A_matrix, desired_logical_S=desired_logical_S)
-
-def run_index_auto_coset(*, num_qubit, num_stabilizer, num_logical_qubits, h_indices, logical_s_dict):
-    H_matrix = np.zeros((num_stabilizer, num_qubit), dtype=int)
-    for row, cols in h_indices.items():
-        H_matrix[row, cols] = 1
-    desired_logical_S = tuple(logical_s_dict.get(i, 1) for i in range(num_logical_qubits))
-    A_matrix=coset_rep_calcu(H_matrix)
-    run_matrix(H_matrix=H_matrix, A_matrix=A_matrix, desired_logical_S=desired_logical_S)
+    run(H_matrix=H_matrix, A_matrix=A_matrix, desired_logical_S=desired_logical_S)
 
 def examples(*, example_choice):
     example = example_choice
     H_matrix, A_matrix, desired_logical_S = load_example(example)
-    run_matrix(H_matrix=H_matrix, A_matrix=A_matrix, desired_logical_S=desired_logical_S)
+    run(H_matrix=H_matrix, A_matrix=A_matrix, desired_logical_S=desired_logical_S)
 
 def main():
     import argparse
