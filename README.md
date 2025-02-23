@@ -26,14 +26,3 @@ See [getting started notebook](https://github.com/yugotakada/mlvtrans/blob/main/
   year = {2025}
 }
 ```
-```
-@misc{mlvtrans,
-    author = {Takada, Yugo},
-    license = {MIT},
-    month = feb,
-    title = {{mlvtrans}},
-    howpublished = {\url{https://github.com/yugotakada/mlvtrans}},
-    version = {0.1.1},
-    year = {2025}
-    }
-```
